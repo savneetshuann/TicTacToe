@@ -30,7 +30,7 @@ def winner(b, l):
 
 
 # Configure text on button while playing with another player
-def get_text(i, j, gb, l1, l2):
+def get_value(i, j, gb, l1, l2):
     global sign
     if board[i][j] == ' ':
         if sign % 2 == 0:
@@ -63,7 +63,7 @@ def isfree(i, j):
 def isfull():
     flag = True
     for i in board:
-        if (i.count(' ') > 0):
+        if i.count(' ') > 0:
             flag = False
     return flag
 
@@ -79,7 +79,7 @@ def gameboard_pl(game_board, l1, l2):
         for j in range(3):
             n = j
             button[i].append(j)
-            get_t = partial(get_text, i, j, game_board, l1, l2)
+            get_t = partial(get_value, i, j, game_board, l1, l2)
             button[i][j] = Button(
                 game_board, bd=5, command=get_t, height=4, width=8)
             button[i][j].grid(row=m, column=n)
@@ -87,7 +87,7 @@ def gameboard_pl(game_board, l1, l2):
 
 
 # Decide the next move of system
-def pc():
+def machine():
     possiblemove = []
     for i in range(len(board)):
         for j in range(len(board[i])):
@@ -149,7 +149,7 @@ def get_text_pc(i, j, gb, l1, l2):
         box = messagebox.showinfo("Tie Game", "Tie Game")
     if (x):
         if sign % 2 != 0:
-            move = pc()
+            move = machine()
             button[move[0]][move[1]].config(state=DISABLED)
             get_text_pc(move[0], move[1], gb, l1, l2)
 
@@ -173,7 +173,7 @@ def gameboard_pc(game_board, l1, l2):
 
 
 # Initialize the game board to play with system
-def withpc(game_board):
+def with_machine(game_board):
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
@@ -187,7 +187,7 @@ def withpc(game_board):
 
 
 # Initialize the game board to play with another player
-def withplayer(game_board):
+def with_player(game_board):
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
@@ -201,31 +201,31 @@ def withplayer(game_board):
     gameboard_pl(game_board, l1, l2)
 
 
-# main function
-def play():
+# creating the ui for the game
+def run():
     menu = Tk()
-    menu.geometry("250x250")
+    menu.geometry("400x400")
     menu.title("Tic Tac Toe")
-    wpc = partial(withpc, menu)
-    wpl = partial(withplayer, menu)
+    wpc = partial(with_machine, menu)
+    wpl = partial(with_player, menu)
 
-    head = Button(menu, text="---Welcome to tic-tac-toe---",
-                  activeforeground='red',
-                  activebackground="yellow", bg="red",
-                  fg="yellow", width=500, font='summer', bd=5)
+    head = Label(menu, text="Welcome to tic-tac-toe",
+                 activeforeground='white',
+                 activebackground="black", bg="white",
+                 fg="black", width=500, font='Modern', bd=5)
 
     B1 = Button(menu, text="Single Player", command=wpc,
-                activeforeground='red',
-                activebackground="yellow", bg="red",
-                fg="yellow", width=500, font='summer', bd=5)
+                activeforeground='white',
+                activebackground="grey", bg="blue",
+                fg="white", width=500, font='Gabriola', bd=5)
 
-    B2 = Button(menu, text="Multi Player", command=wpl, activeforeground='red',
-                activebackground="yellow", bg="red", fg="yellow",
-                width=500, font='summer', bd=5)
+    B2 = Button(menu, text="Multi Player", command=wpl, activeforeground='white',
+                activebackground="grey", bg="blue", fg="white",
+                width=500, font='Gabriola', bd=5)
 
-    B3 = Button(menu, text="Exit", command=menu.quit, activeforeground='red',
-                activebackground="yellow", bg="red", fg="yellow",
-                width=500, font='summer', bd=5)
+    B3 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
+                activebackground="grey", bg="blue", fg="white",
+                width=500, font='Gabriola', bd=5)
     head.pack(side='top')
     B1.pack(side='top')
     B2.pack(side='top')
@@ -233,6 +233,5 @@ def play():
     menu.mainloop()
 
 
-# Call main function
-if __name__ == '__main__':
-    play()
+# execute the program
+run()
