@@ -4,6 +4,7 @@
 import random
 import tkinter
 from tkinter import *
+import sqlite3
 from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
@@ -200,38 +201,100 @@ def with_player(game_board):
     l2.grid(row=2, column=1)
     gameboard_pl(game_board, l1, l2)
 
+    # clear text box
+
+
+# db connections
+def connection():
+    conn = sqlite3.connect('player_info.db')
+    curs = conn.cursor()
+    '''
+      #create table
+    curs.execute("""Create table players(id integer,user_name text, no_of_wins integer, no_of_loss integer, 
+                 points  integer)""")
+    '''
+
+    menu = Tk()
+
+    user_name = Entry(menu, width=30)
+    user_name.grid(row=0, column=0, padx=20)
+    user_name_label = Label(menu, text="Enter your username: ")
+    user_name_label.grid(row=1, column=0)
+
+    # commit changes
+    conn.commit()
+    conn.close()
+
+
+def open_single():
+    top = Toplevel()
+    wpc = partial(with_machine, top)
+    user_name_label = Label(top, text="Enter your username: ")
+    user_name_label.grid(row=0, column=0)
+    user_name = Entry(top, width=30)
+    user_name.grid(row=1, column=0, padx=20)
+    submit_btn = Button(top, text="Play", command=wpc, activeforeground='white',
+                        activebackground="grey", bg="blue", fg="white", font='Gabriola')
+    submit_btn.grid(row=2, column=0, pady=10, padx=10)
+
+
+def open_multiple():
+    top = Toplevel()
+    wpl = partial(with_player, top)
+    user_name_label1 = Label(top, text="Enter username for Player1: ")
+    user_name_label1.grid(row=0, column=0)
+    user_name1 = Entry(top, width=30)
+    user_name1.grid(row=1, column=0, padx=20)
+    user_name_label2 = Label(top, text="Enter username for Player2: ")
+    user_name_label2.grid(row=2, column=0)
+    user_name2 = Entry(top, width=30)
+    user_name2.grid(row=3, column=0, padx=20)
+    submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',
+                        activebackground="grey", bg="blue", fg="white", font='Gabriola')
+    submit_btn.grid(row=4, column=0, pady=10, padx=10)
+
 
 # creating the ui for the game
 def run():
     menu = Tk()
     menu.geometry("400x400")
     menu.title("Tic Tac Toe")
-    wpc = partial(with_machine, menu)
-    wpl = partial(with_player, menu)
+
+    # wpl = partial(with_player, menu)
+    # op=partial(open_single,menu)
+
+    # submit_btn = Button(top, "PLAY")
+    # submit_btn.grid(row=2, column=0, pady=10, padx=10)
 
     head = Label(menu, text="Welcome to tic-tac-toe",
                  activeforeground='white',
                  activebackground="black", bg="white",
                  fg="black", width=500, font='Modern', bd=5)
 
-    B1 = Button(menu, text="Single Player", command=wpc,
-                activeforeground='white',
-                activebackground="grey", bg="blue",
-                fg="white", width=500, font='Gabriola', bd=5)
+    # menu1 = Button(menu, text="Single Player", command=wpc,
+    #                activeforeground='white',
+    #                activebackground="grey", bg="blue",
+    #                fg="white", width=500, font='Gabriola', bd=5)
+    menu1 = Button(menu, text="Single Player", command=open_single, activeforeground='white',
+                   activebackground="grey", bg="blue", fg="white",
+                   width=500, font='Gabriola', bd=5)
 
-    B2 = Button(menu, text="Multi Player", command=wpl, activeforeground='white',
-                activebackground="grey", bg="blue", fg="white",
-                width=500, font='Gabriola', bd=5)
+    menu2 = Button(menu, text="Multi Player", command=open_multiple, activeforeground='white',
+                   activebackground="grey", bg="blue", fg="white",
+                   width=500, font='Gabriola', bd=5)
 
-    B3 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
-                activebackground="grey", bg="blue", fg="white",
-                width=500, font='Gabriola', bd=5)
+    menu3 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
+                   activebackground="grey", bg="blue", fg="white",
+                   width=500, font='Gabriola', bd=5)
     head.pack(side='top')
-    B1.pack(side='top')
-    B2.pack(side='top')
-    B3.pack(side='top')
+    menu1.pack(side='top')
+    menu2.pack(side='top')
+    menu3.pack(side='top')
     menu.mainloop()
 
+
+# table creation
+# connection()
 
 # execute the program
 run()
