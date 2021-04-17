@@ -46,8 +46,7 @@ def get_value(i, j, gb, l1, l2):  # multiplayer configuration for ACTIVE and DIS
     if winner(board, "X"):
         gb.destroy()
         # global opened
-        box = messagebox.showinfo("Winner", "Player1 won the match")
-        print(open_multiple.user_name1)
+        messagebox.showinfo("Winner", "Player1 won the match !")
         # and here to add to sqldb
         # textname.get()
 
@@ -64,12 +63,16 @@ def get_value(i, j, gb, l1, l2):  # multiplayer configuration for ACTIVE and DIS
         conn.commit()
         conn.close()
 
+
+
     elif winner(board, "O"):
         gb.destroy()
-        messagebox.showinfo("Winner", "Player 2 won the match")
+        messagebox.showinfo("Winner", "Player 2 won the match !")
+
     elif (isfull()):
         gb.destroy()
-        messagebox.showinfo("Tie Game", "Tie Game")
+        box2 = messagebox.showinfo("Tie Game", "Tie Game")
+
 
 
 # Check if the player can push the button or not
@@ -143,13 +146,13 @@ def get_value_pc(i, j, gb, l1, l2):
 
     if board[i][j] == ' ':
         if sign % 2 == 0:
-            l1.config(state=DISABLED)         #Player DISABLED
-            l2.config(state=ACTIVE)           #Computer ACTIVE
+            l1.config(state=DISABLED)  # Player DISABLED
+            l2.config(state=ACTIVE)  # Computer ACTIVE
             board[i][j] = "X"
         else:
             button[i][j].config(state=ACTIVE)
-            l2.config(state=DISABLED)          #Computer DISABLED
-            l1.config(state=ACTIVE)            #Player ACTIVE
+            l2.config(state=DISABLED)  # Computer DISABLED
+            l1.config(state=ACTIVE)  # Player ACTIVE
             board[i][j] = "O"
         sign += 1
         button[i][j].config(text=board[i][j])
@@ -213,10 +216,11 @@ def with_player(game_board):
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
-    l1 = Button(game_board, text="Player 1 : X", width=10)
+
+    l1 = Button(game_board, text=uname1, width=10)
 
     l1.grid(row=1, column=1)
-    l2 = Button(game_board, text="Player 2 : O",
+    l2 = Button(game_board, text=uname2,
                 width=10, state=DISABLED)
 
     l2.grid(row=2, column=1)
@@ -242,10 +246,12 @@ def connection():
 def open_single():
     top = Toplevel()
     wpc = partial(with_machine, top)
+    global uname
     user_name_label = Label(top, text="Enter your username: ")
     user_name_label.grid(row=0, column=0)
-    user_name = Entry(top, width=30)
+    user_name = Entry(top, width=30)  # username of player is caught here
     user_name.grid(row=1, column=0, padx=20)
+    uname = user_name.get()
     submit_btn = Button(top, text="Play", command=wpc, activeforeground='white',
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=2, column=0, pady=10, padx=10)
@@ -259,16 +265,19 @@ def insert():
 def open_multiple():
     top = Tk()
     wpl = partial(with_player, top)
-
+    global uname1, uname2
     user_name_label1 = Label(top, text="Enter username for Player1: ")
     user_name_label1.grid(row=0, column=0)
-    open_multiple.user_name1 = Entry(top, width=30)  # user1 from here need to insert in database
-    open_multiple.user_name1.grid(row=1, column=0, padx=20)
+    user_name1 = Entry(top, width=30)  # user1 from here need to insert in database
+    user_name1.grid(row=1, column=0, padx=20)
 
     user_name_label2 = Label(top, text="Enter username for Player2: ")
     user_name_label2.grid(row=2, column=0)
-    open_multiple.user_name2 = Entry(top, width=30)
-    open_multiple.user_name2.grid(row=3, column=0, padx=20)
+    user_name2 = Entry(top, width=30)
+    user_name2.grid(row=3, column=0, padx=20)
+    uname1 = user_name1.get()
+    uname2 = user_name2.get()
+
     submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',  # command=lambda: [wpl, insert]
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
