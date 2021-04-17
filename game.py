@@ -14,37 +14,40 @@ sign = 0
 global board
 board = [[" " for x in range(3)] for y in range(3)]  # For loop for board dimensions
 
+
 # Check l(O/X) won the match or not
 # according to the rules of the game
 def winner(b, l):
     return ((b[0][0] == l and b[0][1] == l and b[0][2] == l) or
             (b[1][0] == l and b[1][1] == l and b[1][2] == l) or
-            (b[2][0] == l and b[2][1] == l and b[2][2] == l) or # confirming all the possiblities on the board
+            (b[2][0] == l and b[2][1] == l and b[2][2] == l) or  # confirming all the possiblities on the board
             (b[0][0] == l and b[1][0] == l and b[2][0] == l) or
             (b[0][1] == l and b[1][1] == l and b[2][1] == l) or
             (b[0][2] == l and b[1][2] == l and b[2][2] == l) or
             (b[0][0] == l and b[1][1] == l and b[2][2] == l) or
             (b[0][2] == l and b[1][1] == l and b[2][0] == l))
 
+
 # Configure text on button while playing with another player
-def get_value(i, j, gb, l1, l2):                  #mulitplayer configuration for ACTIVE and DISABLED state on the board
+def get_value(i, j, gb, l1, l2):  # multiplayer configuration for ACTIVE and DISABLED state on the board
     global sign
 
     if board[i][j] == ' ':
         if sign % 2 == 0:
-            l1.config(state=DISABLED)         #Player1 DISABLED
-            l2.config(state=ACTIVE)           #Player2 ACIVE
+            l1.config(state=DISABLED)  # Player1 DISABLED
+            l2.config(state=ACTIVE)  # Player2 ACIVE
             board[i][j] = "X"
         else:
-            l2.config(state=DISABLED)         #Player2 DISABLED
-            l1.config(state=ACTIVE)           #Player1 ACTIVE
+            l2.config(state=DISABLED)  # Player2 DISABLED
+            l1.config(state=ACTIVE)  # Player1 ACTIVE
             board[i][j] = "O"
         sign += 1
         button[i][j].config(text=board[i][j])
     if winner(board, "X"):
         gb.destroy()
-        #global opened
-        box = messagebox.showinfo("Winner", "Player 1 won the match")
+        # global opened
+        box = messagebox.showinfo("Winner", "Player1 won the match")
+        print(open_multiple.user_name1)
         # and here to add to sqldb
         # textname.get()
 
@@ -63,14 +66,16 @@ def get_value(i, j, gb, l1, l2):                  #mulitplayer configuration for
 
     elif winner(board, "O"):
         gb.destroy()
-        box = messagebox.showinfo("Winner", "Player 2 won the match")
+        messagebox.showinfo("Winner", "Player 2 won the match")
     elif (isfull()):
         gb.destroy()
-        box = messagebox.showinfo("Tie Game", "Tie Game")
+        messagebox.showinfo("Tie Game", "Tie Game")
+
 
 # Check if the player can push the button or not
 def isfree(i, j):
     return board[i][j] == " "
+
 
 # Check the board is full or not
 def isfull():
@@ -79,6 +84,7 @@ def isfull():
         if i.count(' ') > 0:
             flag = False
     return flag
+
 
 # Create the GUI of game board for play along with another player
 def gameboard_players(game_board, l1, l2):
@@ -97,6 +103,7 @@ def gameboard_players(game_board, l1, l2):
             button[i][j].grid(row=m, column=n)
     game_board.mainloop()
 
+
 # Decide the next move of system
 def machine():
     possiblemove = []
@@ -104,7 +111,7 @@ def machine():
         for j in range(len(board[i])):
             if board[i][j] == ' ':
                 possiblemove.append([i, j])
-    move = []
+
     if possiblemove == []:
         return
     else:
@@ -129,19 +136,20 @@ def machine():
             move = random.randint(0, len(edge) - 1)
             return edge[move]
 
+
 # Configure text on button while playing with system
 def get_value_pc(i, j, gb, l1, l2):
     global sign
 
     if board[i][j] == ' ':
         if sign % 2 == 0:
-            l1.config(state=DISABLED)
-            l2.config(state=ACTIVE)
+            l1.config(state=DISABLED)         #Player DISABLED
+            l2.config(state=ACTIVE)           #Computer ACTIVE
             board[i][j] = "X"
         else:
             button[i][j].config(state=ACTIVE)
-            l2.config(state=DISABLED)
-            l1.config(state=ACTIVE)
+            l2.config(state=DISABLED)          #Computer DISABLED
+            l1.config(state=ACTIVE)            #Player ACTIVE
             board[i][j] = "O"
         sign += 1
         button[i][j].config(text=board[i][j])
@@ -167,6 +175,7 @@ def get_value_pc(i, j, gb, l1, l2):
             button[move[0]][move[1]].config(state=DISABLED)
             get_value_pc(move[0], move[1], gb, l1, l2)
 
+
 # Create the GUI of game board for play along with system
 def gameboard_pc(game_board, l1, l2):
     global button
@@ -184,6 +193,7 @@ def gameboard_pc(game_board, l1, l2):
             button[i][j].grid(row=m, column=n)
     game_board.mainloop()
 
+
 # Initialize the game board to play with system
 def with_machine(game_board):
     game_board.destroy()
@@ -196,6 +206,7 @@ def with_machine(game_board):
 
     l2.grid(row=2, column=1)
     gameboard_pc(game_board, l1, l2)
+
 
 # Initialize the game board to play with another player
 def with_player(game_board):
@@ -213,18 +224,20 @@ def with_player(game_board):
 
     # clear text box
 
+
 # db connections
 def connection():
     conn = sqlite3.connect('player_info.db')
     curs = conn.cursor()
 
-    # create table
-    curs.execute("""Create table players(id integer PRIMARY KEY AUTOINCREMENT,user_name text, no_of_wins integer, no_of_loss integer, 
+    # create table for player information to be stored in SqlLite Database
+    curs.execute("""Create table players(P_id integer PRIMARY KEY AUTOINCREMENT,user_name text, no_of_wins integer, no_of_loss integer, 
                  points  integer)""")
 
     # commit changes
     conn.commit()
     conn.close()
+
 
 def open_single():
     top = Toplevel()
@@ -237,9 +250,11 @@ def open_single():
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=2, column=0, pady=10, padx=10)
 
+
 def insert():
     # trying to access here
     pass
+
 
 def open_multiple():
     top = Tk()
@@ -247,17 +262,18 @@ def open_multiple():
 
     user_name_label1 = Label(top, text="Enter username for Player1: ")
     user_name_label1.grid(row=0, column=0)
-    user_name1 = Entry(top, width=30)  # user1 from here need to insert in database
-    user_name1.grid(row=1, column=0, padx=20)
+    open_multiple.user_name1 = Entry(top, width=30)  # user1 from here need to insert in database
+    open_multiple.user_name1.grid(row=1, column=0, padx=20)
 
     user_name_label2 = Label(top, text="Enter username for Player2: ")
     user_name_label2.grid(row=2, column=0)
-    user_name2 = Entry(top, width=30)
-    user_name2.grid(row=3, column=0, padx=20)
-    submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',      #command=lambda: [wpl, insert]
+    open_multiple.user_name2 = Entry(top, width=30)
+    open_multiple.user_name2.grid(row=3, column=0, padx=20)
+    submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',  # command=lambda: [wpl, insert]
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
     top.mainloop()
+
 
 # creating the ui for the game
 def run():
@@ -296,6 +312,7 @@ def run():
     menu2.pack(side='top')
     menu3.pack(side='top')
     menu.mainloop()
+
 
 # table creation
 # connection()
