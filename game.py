@@ -28,7 +28,7 @@ def winner(b, l):
             (b[0][2] == l and b[1][2] == l and b[2][2] == l) or
             (b[0][0] == l and b[1][1] == l and b[2][2] == l) or
             (b[0][2] == l and b[1][1] == l and b[2][0] == l))
-
+#okayvedantchokshitestgit
 
 # Configure text on button while playing with another player
 def get_value(i, j, gb, l1, l2):
