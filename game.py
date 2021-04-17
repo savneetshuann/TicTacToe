@@ -33,6 +33,7 @@ def winner(b, l):
 # Configure text on button while playing with another player
 def get_value(i, j, gb, l1, l2):
     global sign
+
     if board[i][j] == ' ':
         if sign % 2 == 0:
             l1.config(state=DISABLED)
@@ -47,6 +48,23 @@ def get_value(i, j, gb, l1, l2):
     if winner(board, "X"):
         gb.destroy()
         box = messagebox.showinfo("Winner", "Player 1 won the match")
+        # and here to add to sqldb
+        #textname.get()
+
+        conn = sqlite3.connect('player_info.db')
+        c = conn.cursor()
+        # c.execute("""insert or replace INTO players
+        # (user_name,no_of_wins,no_of_loss,points)
+        # VALUES((select id from players where user_name = user_name1.get(),user_name1.get(),
+        # 1,0,10)""")
+        c.execute("""insert or replace INTO players
+        (user_name,no_of_wins,no_of_loss,points)
+        VALUES("test",
+        1,0,10)""")
+        conn.commit()
+        conn.close()
+
+
     elif winner(board, "O"):
         gb.destroy()
         box = messagebox.showinfo("Winner", "Player 2 won the match")
@@ -70,7 +88,7 @@ def isfull():
 
 
 # Create the GUI of game board for play along with another player
-def gameboard_pl(game_board, l1, l2):
+def gameboard_players(game_board, l1, l2):
     global button
     button = []
     for i in range(3):
@@ -121,8 +139,9 @@ def machine():
 
 
 # Configure text on button while playing with system
-def get_text_pc(i, j, gb, l1, l2):
+def get_value_pc(i, j, gb, l1, l2):
     global sign
+
     if board[i][j] == ' ':
         if sign % 2 == 0:
             l1.config(state=DISABLED)
@@ -152,7 +171,7 @@ def get_text_pc(i, j, gb, l1, l2):
         if sign % 2 != 0:
             move = machine()
             button[move[0]][move[1]].config(state=DISABLED)
-            get_text_pc(move[0], move[1], gb, l1, l2)
+            get_value_pc(move[0], move[1], gb, l1, l2)
 
 
 # Create the GUI of game board for play along with system
@@ -166,7 +185,7 @@ def gameboard_pc(game_board, l1, l2):
         for j in range(3):
             n = j
             button[i].append(j)
-            get_t = partial(get_text_pc, i, j, game_board, l1, l2)
+            get_t = partial(get_value_pc, i, j, game_board, l1, l2)
             button[i][j] = Button(
                 game_board, bd=5, command=get_t, height=4, width=8)
             button[i][j].grid(row=m, column=n)
@@ -199,7 +218,7 @@ def with_player(game_board):
                 width=10, state=DISABLED)
 
     l2.grid(row=2, column=1)
-    gameboard_pl(game_board, l1, l2)
+    gameboard_players(game_board, l1, l2)
 
     # clear text box
 
@@ -208,18 +227,10 @@ def with_player(game_board):
 def connection():
     conn = sqlite3.connect('player_info.db')
     curs = conn.cursor()
-    '''
-      #create table
-    curs.execute("""Create table players(id integer,user_name text, no_of_wins integer, no_of_loss integer, 
+
+    # create table
+    curs.execute("""Create table players(id integer PRIMARY KEY AUTOINCREMENT,user_name text, no_of_wins integer, no_of_loss integer, 
                  points  integer)""")
-    '''
-
-    menu = Tk()
-
-    user_name = Entry(menu, width=30)
-    user_name.grid(row=0, column=0, padx=20)
-    user_name_label = Label(menu, text="Enter your username: ")
-    user_name_label.grid(row=1, column=0)
 
     # commit changes
     conn.commit()
@@ -238,20 +249,34 @@ def open_single():
     submit_btn.grid(row=2, column=0, pady=10, padx=10)
 
 
+def insert():
+    #trying to access here
+    pass
+
+
+
+
+
+
+
 def open_multiple():
-    top = Toplevel()
+    top = Tk()
     wpl = partial(with_player, top)
+
     user_name_label1 = Label(top, text="Enter username for Player1: ")
     user_name_label1.grid(row=0, column=0)
-    user_name1 = Entry(top, width=30)
+    user_name1 = Entry(top, width=30)#user1 from here need to insert in databse
     user_name1.grid(row=1, column=0, padx=20)
+
     user_name_label2 = Label(top, text="Enter username for Player2: ")
     user_name_label2.grid(row=2, column=0)
     user_name2 = Entry(top, width=30)
     user_name2.grid(row=3, column=0, padx=20)
-    submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',
+    submit_btn = Button(top, text="Play", command=lambda:[wpl,insert], activeforeground='white',
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
+    top.mainloop()
+
 
 
 # creating the ui for the game
