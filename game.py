@@ -1,12 +1,10 @@
-# Tic Tac Toe game
-
+# Tic Tac Toe game with SqlLite and Numpy library
 
 import random
-import tkinter
-from tkinter import *
+from tkinter import *  # tkinter is used to call all the GUI elements
 import sqlite3
 from functools import partial
-from tkinter import messagebox
+from tkinter import messagebox  # importing messagebox
 from copy import deepcopy
 
 # sign variable to decide the turn of which player
@@ -14,15 +12,14 @@ sign = 0
 
 # Creates an empty board
 global board
-board = [[" " for x in range(3)] for y in range(3)]
-
+board = [[" " for x in range(3)] for y in range(3)]  # For loop for board dimensions
 
 # Check l(O/X) won the match or not
 # according to the rules of the game
 def winner(b, l):
     return ((b[0][0] == l and b[0][1] == l and b[0][2] == l) or
             (b[1][0] == l and b[1][1] == l and b[1][2] == l) or
-            (b[2][0] == l and b[2][1] == l and b[2][2] == l) or
+            (b[2][0] == l and b[2][1] == l and b[2][2] == l) or # confirming all the possiblities on the board
             (b[0][0] == l and b[1][0] == l and b[2][0] == l) or
             (b[0][1] == l and b[1][1] == l and b[2][1] == l) or
             (b[0][2] == l and b[1][2] == l and b[2][2] == l) or
@@ -30,25 +27,26 @@ def winner(b, l):
             (b[0][2] == l and b[1][1] == l and b[2][0] == l))
 
 # Configure text on button while playing with another player
-def get_value(i, j, gb, l1, l2):
+def get_value(i, j, gb, l1, l2):                  #mulitplayer configuration for ACTIVE and DISABLED state on the board
     global sign
 
     if board[i][j] == ' ':
         if sign % 2 == 0:
-            l1.config(state=DISABLED)
-            l2.config(state=ACTIVE)
+            l1.config(state=DISABLED)         #Player1 DISABLED
+            l2.config(state=ACTIVE)           #Player2 ACIVE
             board[i][j] = "X"
         else:
-            l2.config(state=DISABLED)
-            l1.config(state=ACTIVE)
+            l2.config(state=DISABLED)         #Player2 DISABLED
+            l1.config(state=ACTIVE)           #Player1 ACTIVE
             board[i][j] = "O"
         sign += 1
         button[i][j].config(text=board[i][j])
     if winner(board, "X"):
         gb.destroy()
+        #global opened
         box = messagebox.showinfo("Winner", "Player 1 won the match")
         # and here to add to sqldb
-        #textname.get()
+        # textname.get()
 
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
@@ -63,7 +61,6 @@ def get_value(i, j, gb, l1, l2):
         conn.commit()
         conn.close()
 
-
     elif winner(board, "O"):
         gb.destroy()
         box = messagebox.showinfo("Winner", "Player 2 won the match")
@@ -71,11 +68,9 @@ def get_value(i, j, gb, l1, l2):
         gb.destroy()
         box = messagebox.showinfo("Tie Game", "Tie Game")
 
-
 # Check if the player can push the button or not
 def isfree(i, j):
     return board[i][j] == " "
-
 
 # Check the board is full or not
 def isfull():
@@ -84,7 +79,6 @@ def isfull():
         if i.count(' ') > 0:
             flag = False
     return flag
-
 
 # Create the GUI of game board for play along with another player
 def gameboard_players(game_board, l1, l2):
@@ -102,7 +96,6 @@ def gameboard_players(game_board, l1, l2):
                 game_board, bd=5, command=get_t, height=4, width=8)
             button[i][j].grid(row=m, column=n)
     game_board.mainloop()
-
 
 # Decide the next move of system
 def machine():
@@ -136,7 +129,6 @@ def machine():
             move = random.randint(0, len(edge) - 1)
             return edge[move]
 
-
 # Configure text on button while playing with system
 def get_value_pc(i, j, gb, l1, l2):
     global sign
@@ -157,21 +149,23 @@ def get_value_pc(i, j, gb, l1, l2):
     if winner(board, "X"):
         gb.destroy()
         x = False
-        box = messagebox.showinfo("Winner", "Player won the match")
+        messagebox.showinfo("Winner", "Player won the match")
+
     elif winner(board, "O"):
         gb.destroy()
         x = False
-        box = messagebox.showinfo("Winner", "Computer won the match")
+        messagebox.showinfo("Winner", "Computer won the match")
+
     elif (isfull()):
         gb.destroy()
         x = False
-        box = messagebox.showinfo("Tie Game", "Tie Game")
+        messagebox.showinfo("Tie Game", "Tie Game")
+
     if (x):
         if sign % 2 != 0:
             move = machine()
             button[move[0]][move[1]].config(state=DISABLED)
             get_value_pc(move[0], move[1], gb, l1, l2)
-
 
 # Create the GUI of game board for play along with system
 def gameboard_pc(game_board, l1, l2):
@@ -190,7 +184,6 @@ def gameboard_pc(game_board, l1, l2):
             button[i][j].grid(row=m, column=n)
     game_board.mainloop()
 
-
 # Initialize the game board to play with system
 def with_machine(game_board):
     game_board.destroy()
@@ -203,7 +196,6 @@ def with_machine(game_board):
 
     l2.grid(row=2, column=1)
     gameboard_pc(game_board, l1, l2)
-
 
 # Initialize the game board to play with another player
 def with_player(game_board):
@@ -221,7 +213,6 @@ def with_player(game_board):
 
     # clear text box
 
-
 # db connections
 def connection():
     conn = sqlite3.connect('player_info.db')
@@ -235,7 +226,6 @@ def connection():
     conn.commit()
     conn.close()
 
-
 def open_single():
     top = Toplevel()
     wpc = partial(with_machine, top)
@@ -247,16 +237,9 @@ def open_single():
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=2, column=0, pady=10, padx=10)
 
-
 def insert():
-    #trying to access here
+    # trying to access here
     pass
-
-
-
-
-
-
 
 def open_multiple():
     top = Tk()
@@ -264,19 +247,17 @@ def open_multiple():
 
     user_name_label1 = Label(top, text="Enter username for Player1: ")
     user_name_label1.grid(row=0, column=0)
-    user_name1 = Entry(top, width=30)#user1 from here need to insert in databse
+    user_name1 = Entry(top, width=30)  # user1 from here need to insert in database
     user_name1.grid(row=1, column=0, padx=20)
 
     user_name_label2 = Label(top, text="Enter username for Player2: ")
     user_name_label2.grid(row=2, column=0)
     user_name2 = Entry(top, width=30)
     user_name2.grid(row=3, column=0, padx=20)
-    submit_btn = Button(top, text="Play", command=lambda:[wpl,insert], activeforeground='white',
+    submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',      #command=lambda: [wpl, insert]
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
     top.mainloop()
-
-
 
 # creating the ui for the game
 def run():
@@ -315,7 +296,6 @@ def run():
     menu2.pack(side='top')
     menu3.pack(side='top')
     menu.mainloop()
-
 
 # table creation
 # connection()
