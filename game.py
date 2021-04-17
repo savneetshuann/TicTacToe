@@ -52,7 +52,7 @@ def get_value(i, j, gb, l1, l2):
 
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
-        # c.execute("""insert or replace INTO players
+        # c.execute("""insert or replace INTO the players
         # (user_name,no_of_wins,no_of_loss,points)
         # VALUES((select id from players where user_name = user_name1.get(),user_name1.get(),
         # 1,0,10)""")
