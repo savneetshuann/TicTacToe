@@ -2,12 +2,12 @@
 
 
 import random
+import tkinter
 from tkinter import *
 import sqlite3
 from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
-from scoreboard import root
 
 # sign variable to decide the turn of which player
 sign = 0
@@ -32,10 +32,8 @@ def winner(b, l):
 
 
 # Configure text on button while playing with another player
-
 def get_value(i, j, gb, l1, l2):
     global sign
-
 
     if board[i][j] == ' ':
         if sign % 2 == 0:
@@ -50,42 +48,34 @@ def get_value(i, j, gb, l1, l2):
         button[i][j].config(text=board[i][j])
     if winner(board, "X"):
         gb.destroy()
-        print(username1)   # testing value
+        print(username1)  # testing value
+        print(username2)
         box = messagebox.showinfo("Winner", "Player 1 won the match")
-
-        # and here to add to sql db
-        # textname.get()
 
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
-        # c.execute("""insert or replace INTO players
-        # (user_name,no_of_wins,no_of_loss,points)
-        # VALUES((select id from players where user_name = user_name1.get(),user_name1.get(),
-        # 1,0,10)""")
-
-        c.execute("SELECT * FROM players WHERE user_name = ''")
+        c.execute("SELECT * FROM players WHERE user_name =? ", (username1,))
         count = int(len(c.fetchall()))
         print(count)
         if count == 0:
-            print("insert")
-            c.execute("""insert  INTO players (user_name,no_of_wins,no_of_loss,points)
-                                                       VALUES('savneettest', 1,0,10)""")
-
+            print("in insert")
+            c.execute("insert INTO players(user_name,no_of_wins,no_of_loss,points) VALUES(?, 1,0,10)", (username1,))
         else:
-            print("update")
-            c.execute(
-                """UPDATE players SET no_of_wins = no_of_wins + 1  WHERE user_name = 
-                'savneettest'""")
-            c.execute(
-                """UPDATE players SET points = points + 10  WHERE user_name = 
-                'savneettest'""")
-
-        # c.execute("""insert  INTO players
-        # (user_name,no_of_wins,no_of_loss,points)
-        # VALUES("test1", 0,0,0)
-        # WHERE NOT EXISTS ( SELECT *  FROM players WHERE user_name = 'test1' )""")
-        # c.execute("UPDATE players SET no_of_wins = no_of_wins + 1 and points = points + 10  WHERE user_name = 'test1'")
-        # c.execute("UPDATE players SET points = points + 10 WHERE points = 'test1'")
+            print("in update")
+            c.execute("""UPDATE players SET no_of_wins = no_of_wins + 1  WHERE user_name = 
+                ?""", (username1,))
+            c.execute("""UPDATE players SET points = points + 10  WHERE user_name = 
+                ?""", (username1,))
+        c.execute("SELECT * FROM players WHERE user_name =? ", (username2,))
+        count = int(len(c.fetchall()))
+        print(count)
+        if count == 0:
+            print("in insert2")
+            c.execute("insert INTO players(user_name,no_of_wins,no_of_loss,points) VALUES(?, 0,1,0)", (username2,))
+        else:
+            print("in update2")
+            c.execute("""UPDATE players SET no_of_loss = no_of_loss + 1  WHERE user_name = 
+                        ?""", (username2,))
 
         conn.commit()
         conn.close()
@@ -94,13 +84,36 @@ def get_value(i, j, gb, l1, l2):
     elif winner(board, "O"):
         gb.destroy()
         box = messagebox.showinfo("Winner", "Player 2 won the match")
-    elif (isfull()):
+        conn = sqlite3.connect('player_info.db')
+        c2 = conn.cursor()
+        c2.execute("SELECT * FROM players WHERE user_name =? ", (username2,))
+        count = int(len(c2.fetchall()))
+        print(count)
+        if count == 0:
+            print("in insertplayer2")
+            c2.execute("insert INTO players(user_name,no_of_wins,no_of_loss,points) VALUES(?, 1,0,10)", (username2,))
+        else:
+            print("in update")
+            c2.execute("""UPDATE players SET no_of_wins = no_of_wins + 1  WHERE user_name = 
+                       ?""", username2)
+            c2.execute("""UPDATE players SET points = points + 10  WHERE user_name = 
+                       ?""", username2)
+        c2.execute("SELECT * FROM players WHERE user_name =? ", (username1,))
+        count = int(len(c2.fetchall()))
+        print(count)
+        if count == 0:
+            print("in insert2")
+            c2.execute("insert INTO players(user_name,no_of_wins,no_of_loss,points) VALUES(?, 0,1,0)", (username1,))
+        else:
+            print("in update2")
+            c2.execute("""UPDATE players SET no_of_loss = no_of_loss + 1  WHERE user_name = 
+                               ?""", (username1,))
+        conn.commit()
+        conn.close()
+
+    elif isfull():
         gb.destroy()
         box = messagebox.showinfo("Tie Game", "Tie Game")
-
-
-
-#def scoreboard():
 
 
 # Check if the player can push the button or not
@@ -118,7 +131,7 @@ def isfull():
 
 
 # Create the GUI of game board for play along with another player
-def gameboard_players(game_board, l1, l2,username1):
+def gameboard_players(game_board, l1, l2):
     global button
     button = []
     for i in range(3):
@@ -189,6 +202,23 @@ def get_value_pc(i, j, gb, l1, l2):
         gb.destroy()
         x = False
         box = messagebox.showinfo("Winner", "Player won the match")
+        conn = sqlite3.connect('player_info.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM players WHERE user_name =? ", (user_name,))
+        count = int(len(c.fetchall()))
+        print(count)
+        if count == 0:
+            print("in insert")
+            c.execute("insert INTO players(user_name,no_of_wins,no_of_loss,points) VALUES(?, 1,0,10)", (user_name,))
+        else:
+            print("in update")
+            c.execute("""UPDATE players SET no_of_wins = no_of_wins + 1  WHERE user_name = 
+                      ?""", (user_name,))
+            c.execute("""UPDATE players SET points = points + 10  WHERE user_name = 
+                      ?""", (user_name,))
+
+        conn.commit()
+        conn.close()
 
     elif winner(board, "O"):
         gb.destroy()
@@ -224,8 +254,9 @@ def gameboard_pc(game_board, l1, l2):
 
 
 # Initialize the game board to play with system
-def with_machine(game_board):
-
+def with_machine(game_board, username):
+    global user_name
+    user_name = username.get()
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
@@ -239,13 +270,14 @@ def with_machine(game_board):
 
 
 # Initialize the game board to play with another player
-def with_player(game_board,user_name1,user_name2):
+def with_player(game_board, user_name1, user_name2):
     global username1
     global username2
-    username1=user_name1.get()
-    username2=user_name2.get()
-    print(username1) #test
-    print(username2) #test
+    username1 = user_name1.get()
+    username2 = user_name2.get()
+    print(username1)
+    print(username2)
+
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
@@ -256,7 +288,7 @@ def with_player(game_board,user_name1,user_name2):
                 width=10, state=DISABLED)
 
     l2.grid(row=2, column=1)
-    gameboard_players(game_board, l1, l2,username1)
+    gameboard_players(game_board, l1, l2)
 
     # clear text box
 
@@ -278,12 +310,12 @@ def connection():
 def open_single(game_board):
     game_board.destroy()
     game_board = Tk()
-    wpc = partial(with_machine)
+    wpc = partial(with_machine, game_board)
     user_name_label = Label(game_board, text="Enter your username: ")
     user_name_label.grid(row=0, column=0)
     user_name = Entry(game_board, width=30)
     user_name.grid(row=1, column=0, padx=20)
-    submit_btn = Button(game_board, text="Play", command=lambda : wpc(user_name), activeforeground='white',
+    submit_btn = Button(game_board, text="Play", command=lambda: wpc(user_name), activeforeground='white',
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=2, column=0, pady=10, padx=10)
     game_board.mainloop()
@@ -307,7 +339,7 @@ def open_multiple():
     user_name2 = Entry(top, width=30)
     user_name2.grid(row=3, column=0, padx=20)
     wpl = partial(with_player, top)
-    submit_btn = Button(top, text="Play", command=lambda: wpl(user_name1,user_name2), activeforeground='white',
+    submit_btn = Button(top, text="Play", command=lambda: wpl(user_name1, user_name2), activeforeground='white',
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
     top.mainloop()
@@ -320,12 +352,20 @@ def run():
     menu.title("Tic Tac Toe")
 
     single = partial(open_single, menu)
+    # op=partial(open_single,menu)
+
+    # submit_btn = Button(top, "PLAY")
+    # submit_btn.grid(row=2, column=0, pady=10, padx=10)
 
     head = Label(menu, text="Welcome to tic-tac-toe",
                  activeforeground='white',
                  activebackground="black", bg="white",
                  fg="black", width=500, font='Modern', bd=5)
 
+    # menu1 = Button(menu, text="Single Player", command=wpc,
+    #                activeforeground='white',
+    #                activebackground="grey", bg="blue",
+    #                fg="white", width=500, font='Gabriola', bd=5)
     menu1 = Button(menu, text="Single Player", command=single, activeforeground='white',
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
@@ -334,20 +374,15 @@ def run():
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
 
-    menu3 = Button(menu, text="Scoreboard", command=root, activeforeground='white',
+    menu3 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
-
-    menu4 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
-                   activebackground="grey", bg="blue", fg="white",
-                   width=500, font='Gabriola', bd=5)
-
     head.pack(side='top')
     menu1.pack(side='top')
     menu2.pack(side='top')
     menu3.pack(side='top')
-    menu4.pack(side='top')
     menu.mainloop()
+
 
 # table creation
 # connection()
