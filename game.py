@@ -7,7 +7,7 @@ import sqlite3
 from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
-from scoreboard import new
+from scoreboard import root
 
 # sign variable to decide the turn of which player
 sign = 0
@@ -278,7 +278,7 @@ def connection():
 def open_single(game_board):
     game_board.destroy()
     game_board = Tk()
-    wpc = partial(with_machine, game_board)
+    wpc = partial(with_machine)
     user_name_label = Label(game_board, text="Enter your username: ")
     user_name_label.grid(row=0, column=0)
     user_name = Entry(game_board, width=30)
@@ -334,7 +334,7 @@ def run():
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
 
-    menu3 = Button(menu, text="Scoreboard", command=new, activeforeground='white',
+    menu3 = Button(menu, text="Scoreboard", command=root, activeforeground='white',
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
 

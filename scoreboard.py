@@ -14,7 +14,7 @@ def connect():
     con1.close()
 
 
-def View(tree):
+def View():
     con1 = sqlite3.connect('player_info.db')
     cur1 = con1.cursor()
     cur1.execute("Select user_name,no_of_wins,points from players")
@@ -27,31 +27,33 @@ def View(tree):
 
     con1.close()
 
+connect()
 
-def new():
-    connect()
+root = tk.Tk()
 
-    root = tk.Tk()
-    global tree
-    tree = ttk.Treeview(root, column=("c1", "c2", "c3"), show='headings')
+tree = ttk.Treeview(root, column=("c1", "c2", "c3"), show='headings')
 
-    tree.column("#1", anchor=tk.CENTER)
+tree.column("#1", anchor=tk.CENTER)
 
-    tree.heading("#1", text="NAME")
+tree.heading("#1", text="NAME")
 
-    tree.column("#2", anchor=tk.CENTER)
+tree.column("#2", anchor=tk.CENTER)
 
-    tree.heading("#2", text="WINS")
+tree.heading("#2", text="WINS")
 
-    tree.column("#3", anchor=tk.CENTER)
+tree.column("#3", anchor=tk.CENTER)
 
-    tree.heading("#3", text="POINTS")
+tree.heading("#3", text="POINTS")
 
-    tree.pack()
+tree.pack()
 
-    button1 = tk.Button(text="Display data", command=View)
+button1 = tk.Button(text="Display data", command=View)
 
-    button1.pack(pady=10)
+button1.pack(pady=10)
+
+root.mainloop()
 
 
-new()
+
+
+
