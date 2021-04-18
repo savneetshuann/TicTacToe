@@ -45,21 +45,42 @@ def get_value(i, j, gb, l1, l2):  # multiplayer configuration for ACTIVE and DIS
         button[i][j].config(text=board[i][j])
     if winner(board, "X"):
         gb.destroy()
+        print(uname1)
         # global opened
         messagebox.showinfo("Winner", "Player1 won the match !")
         # and here to add to sqldb
         # textname.get()
 
-        conn = sqlite3.connect('player_info.db')
+        conn = sqlite3.connect('player_info1.db')
         c = conn.cursor()
         # c.execute("""insert or replace INTO the players
         # (user_name,no_of_wins,no_of_loss,points)
         # VALUES((select id from players where user_name = user_name1.get(),user_name1.get(),
         # 1,0,10)""")
-        c.execute("""insert or replace INTO players
-        (user_name,no_of_wins,no_of_loss,points)
-        VALUES("test",
-        1,0,10)""")
+        c.execute("SELECT * FROM players WHERE user_name = ''")
+        count = int(len(c.fetchall()))
+        print(count)
+        if count == 0:
+            print("insert")
+            c.execute("""insert  INTO players (user_name,no_of_wins,no_of_loss,points)
+                                                               VALUES('savneettest', 1,0,10)""")
+
+        else:
+            print("update")
+            c.execute(
+                """UPDATE players SET no_of_wins = no_of_wins + 1  WHERE user_name = 
+                'savneettest'""")
+            c.execute(
+                """UPDATE players SET points = points + 10  WHERE user_name = 
+                'savneettest'""")
+
+        # c.execute("""insert  INTO players
+        # (user_name,no_of_wins,no_of_loss,points)
+        # VALUES("test1", 0,0,0)
+        # WHERE NOT EXISTS ( SELECT *  FROM players WHERE user_name = 'test1' )""")
+        # c.execute("UPDATE players SET no_of_wins = no_of_wins + 1 and points = points + 10  WHERE user_name = 'test1'")
+        # c.execute("UPDATE players SET points = points + 10 WHERE points = 'test1'")
+
         conn.commit()
         conn.close()
 
@@ -67,7 +88,7 @@ def get_value(i, j, gb, l1, l2):  # multiplayer configuration for ACTIVE and DIS
 
     elif winner(board, "O"):
         gb.destroy()
-        messagebox.showinfo("Winner", "Player 2 won the match !")
+        box1 = messagebox.showinfo("Winner", "Player 2 won the match !")
 
     elif (isfull()):
         gb.destroy()
@@ -114,7 +135,7 @@ def machine():
         for j in range(len(board[i])):
             if board[i][j] == ' ':
                 possiblemove.append([i, j])
-
+    move = []
     if possiblemove == []:
         return
     else:
@@ -172,7 +193,7 @@ def get_value_pc(i, j, gb, l1, l2):
         x = False
         messagebox.showinfo("Tie Game", "Tie Game")
 
-    if (x):
+    if x:
         if sign % 2 != 0:
             move = machine()
             button[move[0]][move[1]].config(state=DISABLED)
@@ -198,7 +219,8 @@ def gameboard_pc(game_board, l1, l2):
 
 
 # Initialize the game board to play with system
-def with_machine(game_board):
+def with_machine(game_board, uname):
+    print(uname)
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
@@ -212,19 +234,20 @@ def with_machine(game_board):
 
 
 # Initialize the game board to play with another player
-def with_player(game_board):
+def with_player(game_board, uname1, uname2):
+    print(uname1)
     game_board.destroy()
     game_board = Tk()
     game_board.title("Tic Tac Toe")
 
-    l1 = Button(game_board, text=uname1, width=10)
+    l1 = Button(game_board, text="Player 1: X", width=10)
 
     l1.grid(row=1, column=1)
-    l2 = Button(game_board, text=uname2,
+    l2 = Button(game_board, text="Player 2: 0",
                 width=10, state=DISABLED)
 
     l2.grid(row=2, column=1)
-    gameboard_players(game_board, l1, l2)
+    gameboard_players(game_board, l1, l2,uname1,uname2)
 
     # clear text box
 
@@ -243,18 +266,20 @@ def connection():
     conn.close()
 
 
-def open_single():
-    top = Toplevel()
-    wpc = partial(with_machine, top)
+def open_single(game_board):
     global uname
-    user_name_label = Label(top, text="Enter your username: ")
+    game_board.destroy()
+    game_board = Tk()
+    wpc = partial(with_machine, game_board)
+    user_name_label = Label(game_board, text="Enter your username: ")
     user_name_label.grid(row=0, column=0)
-    user_name = Entry(top, width=30)  # username of player is caught here
+    user_name = Entry(game_board, width=30)
     user_name.grid(row=1, column=0, padx=20)
     uname = user_name.get()
-    submit_btn = Button(top, text="Play", command=wpc, activeforeground='white',
+    submit_btn = Button(game_board, text="Play", command=lambda: wpc(uname), activeforeground='white',
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=2, column=0, pady=10, padx=10)
+    game_board.mainloop()
 
 
 def insert():
@@ -264,11 +289,13 @@ def insert():
 
 def open_multiple():
     top = Tk()
-    wpl = partial(with_player, top)
+
     global uname1, uname2
+
+
     user_name_label1 = Label(top, text="Enter username for Player1: ")
     user_name_label1.grid(row=0, column=0)
-    user_name1 = Entry(top, width=30)  # user1 from here need to insert in database
+    user_name1 = Entry(top, width=30)  # user1 from here need to insert in databse
     user_name1.grid(row=1, column=0, padx=20)
 
     user_name_label2 = Label(top, text="Enter username for Player2: ")
@@ -277,8 +304,8 @@ def open_multiple():
     user_name2.grid(row=3, column=0, padx=20)
     uname1 = user_name1.get()
     uname2 = user_name2.get()
-
-    submit_btn = Button(top, text="Play", command=wpl, activeforeground='white',  # command=lambda: [wpl, insert]
+    wpl = partial(with_player, top)
+    submit_btn = Button(top, text="Play", command=lambda: wpl(uname1,uname2), activeforeground='white',
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
     top.mainloop()
@@ -290,6 +317,7 @@ def run():
     menu.geometry("400x400")
     menu.title("Tic Tac Toe")
 
+    single = partial(open_single, menu)
     # wpl = partial(with_player, menu)
     # op=partial(open_single,menu)
 
