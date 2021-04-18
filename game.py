@@ -1,13 +1,12 @@
-# Tic Tac Toe game
-
+# Tic Tac Toe game using SqlLite,
 
 import random
-import tkinter
 from tkinter import *
 import sqlite3
 from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
+import scoreboard
 
 # sign variable to decide the turn of which player
 sign = 0
@@ -362,10 +361,6 @@ def run():
                  activebackground="black", bg="white",
                  fg="black", width=500, font='Modern', bd=5)
 
-    # menu1 = Button(menu, text="Single Player", command=wpc,
-    #                activeforeground='white',
-    #                activebackground="grey", bg="blue",
-    #                fg="white", width=500, font='Gabriola', bd=5)
     menu1 = Button(menu, text="Single Player", command=single, activeforeground='white',
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
@@ -374,13 +369,18 @@ def run():
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
 
-    menu3 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
+    menu3 = Button(menu, text="Exit", command=scoreboard.root, activeforeground='white',
+                   activebackground="grey", bg="blue", fg="white",
+                   width=500, font='Gabriola', bd=5)
+
+    menu4 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
     head.pack(side='top')
     menu1.pack(side='top')
     menu2.pack(side='top')
     menu3.pack(side='top')
+    menu4.pack(side='top')
     menu.mainloop()
 
 
@@ -388,4 +388,5 @@ def run():
 # connection()
 
 # execute the program
-run()
+if __name__ == '__main__':
+    run()

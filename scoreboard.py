@@ -1,9 +1,9 @@
-from tkinter import ttk
+from tkinter import ttk  # we use ttk for more advance styles and tree frame in scoreboard
 import tkinter as tk
 import sqlite3
 
 
-def connect():
+def connect():  # Database Connection
     con1 = sqlite3.connect('player_info.db')
     cur1 = con1.cursor()
     cur1.execute("CREATE TABLE IF NOT EXISTS players(user_name text, no_of_wins integer, points integer)")
@@ -12,7 +12,7 @@ def connect():
     con1.close()
 
 
-def View():
+def View():  # Method to View the data into the Scoreboard Table
     con1 = sqlite3.connect('player_info.db')
     cur1 = con1.cursor()
     cur1.execute("Select user_name,no_of_wins,points from players")
@@ -25,9 +25,10 @@ def View():
 
     con1.close()
 
-connect()
 
+connect()
 root = tk.Tk()
+
 
 tree = ttk.Treeview(root, column=("c1", "c2", "c3"), show='headings')
 
@@ -49,9 +50,5 @@ button1 = tk.Button(text="Display data", command=View)
 
 button1.pack(pady=10)
 
-root.mainloop()
-
-
-
-
-
+if __name__ == '__main__':
+    root.mainloop()
