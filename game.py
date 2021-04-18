@@ -11,7 +11,6 @@ from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
 
-
 # sign variable to decide the turn of which player
 sign = 0
 
@@ -34,7 +33,7 @@ def winner(b, l):
 
 
 # Configure text on button while playing with another player
-def get_value(i, j, gb, l1, l2,):
+def get_value(i, j, gb, l1, l2, ):
     global sign
 
     if board[i][j] == ' ':
@@ -53,7 +52,7 @@ def get_value(i, j, gb, l1, l2,):
         print(username1)  # testing value
         print(username2)
         messagebox.showinfo("Winner", "Player 1 won the match")
-        
+
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
         c.execute("SELECT * FROM players WHERE user_name =? ", (username1,))
@@ -120,7 +119,6 @@ def get_value(i, j, gb, l1, l2,):
     elif isfull():
         gb.destroy()
         messagebox.showinfo("Tie Game", "Tie Game")
-
 
 
 # Check if the player can push the button or not
@@ -317,7 +315,6 @@ def connection():
 
 
 def open_single(game_board):
-
     game_board.destroy()
     game_board = Tk()
     wpc = partial(with_machine, game_board)
@@ -356,18 +353,20 @@ def open_multiple():
 
 
 def s_graph():
-    def graph_data():
-        conn7 = sqlite3.connect('player_info.db')
-        g = conn7.cursor()
-        g.execute(
-            'SELECT * FROM(SELECT user_name,points, RANK() OVER (ORDER BY points DESC) PRANK FROM players) WHERE '
-            'PRANK <=3')
-        rdata = g.fetchall()
-        for row in rdata:
-            print(row)
+    dat = sqlite3.connect('player_info.db')
+    # query = dat.execute("SELECT * FROM(SELECT user_name,points, RANK() OVER (ORDER BY points DESC) PRANK FROM players) WHERE PRANK <=3")
 
-
-
+    g = dat.cursor()
+    g.execute(
+        'SELECT * FROM(SELECT user_name,points, RANK() OVER (ORDER BY points DESC) PRANK FROM players) WHERE '
+        'PRANK <=3')
+    rdata = g.fetchall()
+    plt.figure(1)
+    plt.bar([x['PRANK'] for x in rdata], [y['points'] for y in rdata])
+    plt.xlabel('Names')
+    plt.ylabel('Points)')
+    plt.show()
+    plt.close()
 
 
 def score():
@@ -429,7 +428,11 @@ def run():
                    activebackground="grey", bg="blue", fg="red",
                    width=500, font='Gabriola', bd=5)
 
-    menu4 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
+    menu4 = Button(menu, text="Exit", command=s_graph(), activeforeground='white',
+                   activebackground="grey", bg="blue", fg="red",
+                   width=500, font='Gabriola', bd=5)
+
+    menu5 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
                    activebackground="grey", bg="blue", fg="red",
                    width=500, font='Gabriola', bd=5)
     head.pack(side='top')
@@ -437,6 +440,7 @@ def run():
     menu2.pack(side='top')
     menu3.pack(side='top')
     menu4.pack(side='top')
+    menu5.pack(side='top')
     menu.mainloop()
 
 
