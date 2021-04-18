@@ -1,12 +1,15 @@
 # Tic Tac Toe game using SqlLite,
 
 import random
-from tkinter import *
+import tkinter as tk
 import sqlite3
+from tkinter import *
+from tkinter import ttk  # we use ttk for more advance styles and tree frame in scoreboard
 from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
-import scoreboard
+
+# import scoreboard
 
 # sign variable to decide the turn of which player
 sign = 0
@@ -49,7 +52,7 @@ def get_value(i, j, gb, l1, l2):
         gb.destroy()
         print(username1)  # testing value
         print(username2)
-        box = messagebox.showinfo("Winner", "Player 1 won the match")
+        messagebox.showinfo("Winner", "Player 1 won the match")
 
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
@@ -82,7 +85,7 @@ def get_value(i, j, gb, l1, l2):
 
     elif winner(board, "O"):
         gb.destroy()
-        box = messagebox.showinfo("Winner", "Player 2 won the match")
+        messagebox.showinfo("Winner", "Player 2 won the match")
         conn = sqlite3.connect('player_info.db')
         c2 = conn.cursor()
         c2.execute("SELECT * FROM players WHERE user_name =? ", (username2,))
@@ -112,7 +115,7 @@ def get_value(i, j, gb, l1, l2):
 
     elif isfull():
         gb.destroy()
-        box = messagebox.showinfo("Tie Game", "Tie Game")
+        messagebox.showinfo("Tie Game", "Tie Game")
 
 
 # Check if the player can push the button or not
@@ -200,7 +203,7 @@ def get_value_pc(i, j, gb, l1, l2):
     if winner(board, "X"):
         gb.destroy()
         x = False
-        box = messagebox.showinfo("Winner", "Player won the match")
+        messagebox.showinfo("Winner", "Player won the match")
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
         c.execute("SELECT * FROM players WHERE user_name =? ", (user_name,))
@@ -344,6 +347,43 @@ def open_multiple():
     top.mainloop()
 
 
+def score():
+    def View():  # Method to View the data into the Scoreboard Table
+        con1 = sqlite3.connect('player_info.db')
+        cur1 = con1.cursor()
+        cur1.execute("Select user_name,no_of_wins,points from players")
+        rows = cur1.fetchall()
+
+        for row in rows:
+            print(row)
+
+            tree.insert("", tk.END, values=row)
+
+        con1.close()
+
+    root = tk.Tk()
+
+    tree = ttk.Treeview(root, column=("c1", "c2", "c3"), show='headings')
+
+    tree.column("#1", anchor=tk.CENTER)
+
+    tree.heading("#1", text="NAME")
+
+    tree.column("#2", anchor=tk.CENTER)
+
+    tree.heading("#2", text="WINS")
+
+    tree.column("#3", anchor=tk.CENTER)
+
+    tree.heading("#3", text="POINTS")
+    tree.pack()
+    #button1 = Button(text="Display data", command=View)
+    #button1.pack(pady=10)
+    View()
+
+    root.mainloop()
+
+
 # creating the ui for the game
 def run():
     menu = Tk()
@@ -351,10 +391,6 @@ def run():
     menu.title("Tic Tac Toe")
 
     single = partial(open_single, menu)
-    # op=partial(open_single,menu)
-
-    # submit_btn = Button(top, "PLAY")
-    # submit_btn.grid(row=2, column=0, pady=10, padx=10)
 
     head = Label(menu, text="Welcome to tic-tac-toe",
                  activeforeground='white',
@@ -362,19 +398,19 @@ def run():
                  fg="black", width=500, font='Modern', bd=5)
 
     menu1 = Button(menu, text="Single Player", command=single, activeforeground='white',
-                   activebackground="grey", bg="blue", fg="white",
+                   activebackground="grey", bg="blue", fg="red",
                    width=500, font='Gabriola', bd=5)
 
     menu2 = Button(menu, text="Multi Player", command=open_multiple, activeforeground='white',
-                   activebackground="grey", bg="blue", fg="white",
+                   activebackground="grey", bg="blue", fg="red",
                    width=500, font='Gabriola', bd=5)
 
-    menu3 = Button(menu, text="Exit", command=scoreboard.root, activeforeground='white',
-                   activebackground="grey", bg="blue", fg="white",
+    menu3 = Button(menu, text="Scoreboard", command=score, activeforeground='white',
+                   activebackground="grey", bg="blue", fg="red",
                    width=500, font='Gabriola', bd=5)
 
     menu4 = Button(menu, text="Exit", command=menu.quit, activeforeground='white',
-                   activebackground="grey", bg="blue", fg="white",
+                   activebackground="grey", bg="blue", fg="red",
                    width=500, font='Gabriola', bd=5)
     head.pack(side='top')
     menu1.pack(side='top')
