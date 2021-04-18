@@ -11,14 +11,12 @@ from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
 
-# import scoreboard
 
 # sign variable to decide the turn of which player
 sign = 0
 
 # Creates an empty board
 global board
-
 board = [[" " for x in range(3)] for y in range(3)]
 
 
@@ -36,7 +34,7 @@ def winner(b, l):
 
 
 # Configure text on button while playing with another player
-def get_value(i, j, gb, l1, l2):
+def get_value(i, j, gb, l1, l2,):
     global sign
 
     if board[i][j] == ' ':
@@ -55,7 +53,7 @@ def get_value(i, j, gb, l1, l2):
         print(username1)  # testing value
         print(username2)
         messagebox.showinfo("Winner", "Player 1 won the match")
-
+        
         conn = sqlite3.connect('player_info.db')
         c = conn.cursor()
         c.execute("SELECT * FROM players WHERE user_name =? ", (username1,))
@@ -85,9 +83,11 @@ def get_value(i, j, gb, l1, l2):
         conn.close()
 
 
+
     elif winner(board, "O"):
         gb.destroy()
         messagebox.showinfo("Winner", "Player 2 won the match")
+
         conn = sqlite3.connect('player_info.db')
         c2 = conn.cursor()
         c2.execute("SELECT * FROM players WHERE user_name =? ", (username2,))
@@ -116,9 +116,11 @@ def get_value(i, j, gb, l1, l2):
         conn.commit()
         conn.close()
 
+
     elif isfull():
         gb.destroy()
         messagebox.showinfo("Tie Game", "Tie Game")
+
 
 
 # Check if the player can push the button or not
@@ -211,6 +213,7 @@ def get_value_pc(i, j, gb, l1, l2):
         c = conn.cursor()
         c.execute("SELECT * FROM players WHERE user_name =? ", (user_name,))
         count = int(len(c.fetchall()))
+
         print(count)
         if count == 0:
             print("in insert")
@@ -225,15 +228,16 @@ def get_value_pc(i, j, gb, l1, l2):
         conn.commit()
         conn.close()
 
+
     elif winner(board, "O"):
         gb.destroy()
         x = False
-        box = messagebox.showinfo("Winner", "Computer won the match")
+        messagebox.showinfo("Winner", "Computer won the match")
 
     elif isfull():
         gb.destroy()
         x = False
-        box = messagebox.showinfo("Tie Game", "Tie Game")
+        messagebox.showinfo("Tie Game", "Tie Game")
     if x:
         if sign % 2 != 0:
             move = machine()
@@ -313,6 +317,7 @@ def connection():
 
 
 def open_single(game_board):
+
     game_board.destroy()
     game_board = Tk()
     wpc = partial(with_machine, game_board)
@@ -350,7 +355,7 @@ def open_multiple():
     top.mainloop()
 
 
-def bargraph():
+def s_graph():
     def graph_data():
         conn7 = sqlite3.connect('player_info.db')
         g = conn7.cursor()
@@ -360,6 +365,8 @@ def bargraph():
         rdata = g.fetchall()
         for row in rdata:
             print(row)
+
+
 
 
 
