@@ -79,6 +79,7 @@ def get_value(i, j, gb, l1, l2):
             c.execute("""UPDATE players SET no_of_loss = no_of_loss + 1  WHERE user_name = 
                         ?""", (username2,))
 
+
         conn.commit()
         conn.close()
 
@@ -103,6 +104,7 @@ def get_value(i, j, gb, l1, l2):
         c2.execute("SELECT * FROM players WHERE user_name =? ", (username1,))
         count = int(len(c2.fetchall()))
         print(count)
+
         if count == 0:
             print("in insert2")
             c2.execute("insert INTO players(user_name,no_of_wins,no_of_loss,points) VALUES(?, 0,1,0)", (username1,))
@@ -218,6 +220,7 @@ def get_value_pc(i, j, gb, l1, l2):
                       ?""", (user_name,))
             c.execute("""UPDATE players SET points = points + 10  WHERE user_name = 
                       ?""", (user_name,))
+
 
         conn.commit()
         conn.close()
@@ -377,10 +380,7 @@ def score():
 
     tree.heading("#3", text="POINTS")
     tree.pack()
-    #button1 = Button(text="Display data", command=View)
-    #button1.pack(pady=10)
     View()
-
     root.mainloop()
 
 
