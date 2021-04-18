@@ -3,6 +3,8 @@
 import random
 import tkinter as tk
 import sqlite3
+import pandas as pd
+import matplotlib.pyplot as plt
 from tkinter import *
 from tkinter import ttk  # we use ttk for more advance styles and tree frame in scoreboard
 from functools import partial
@@ -78,7 +80,6 @@ def get_value(i, j, gb, l1, l2):
             print("in update2")
             c.execute("""UPDATE players SET no_of_loss = no_of_loss + 1  WHERE user_name = 
                         ?""", (username2,))
-
 
         conn.commit()
         conn.close()
@@ -221,7 +222,6 @@ def get_value_pc(i, j, gb, l1, l2):
             c.execute("""UPDATE players SET points = points + 10  WHERE user_name = 
                       ?""", (user_name,))
 
-
         conn.commit()
         conn.close()
 
@@ -348,6 +348,19 @@ def open_multiple():
                         activebackground="grey", bg="blue", fg="white", font='Gabriola')
     submit_btn.grid(row=4, column=0, pady=10, padx=10)
     top.mainloop()
+
+
+def bargraph():
+    def graph_data():
+        conn7 = sqlite3.connect('player_info.db')
+        g = conn7.cursor()
+        g.execute(
+            'SELECT * FROM(SELECT user_name,points, RANK() OVER (ORDER BY points DESC) PRANK FROM players) WHERE '
+            'PRANK <=3')
+        rdata = g.fetchall()
+        for row in rdata:
+            print(row)
+
 
 
 def score():
