@@ -7,7 +7,7 @@ import sqlite3
 from functools import partial
 from tkinter import messagebox
 from copy import deepcopy
-from scoreboard import root
+from scoreboard import new
 
 # sign variable to decide the turn of which player
 sign = 0
@@ -334,7 +334,7 @@ def run():
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
 
-    menu3 = Button(menu, text="Scoreboard", command=root.mainloop(), activeforeground='white',
+    menu3 = Button(menu, text="Scoreboard", command=new, activeforeground='white',
                    activebackground="grey", bg="blue", fg="white",
                    width=500, font='Gabriola', bd=5)
 
